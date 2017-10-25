@@ -1,0 +1,8 @@
+{
+  "name" : "image-resize",
+  "version" : "0.0.1",
+  "dependencies" : {
+    "jimp" : "latest",
+    "aws-sdk" : "^2.36.0"
+  }
+}

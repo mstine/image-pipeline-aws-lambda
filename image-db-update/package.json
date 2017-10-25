@@ -1,0 +1,8 @@
+{
+  "name" : "image-db-update",
+  "version" : "0.0.1",
+  "dependencies" : {
+    "aws-sdk" : "^2.36.0",
+    "dynamodb-doc": "1.0.0"
+  }
+}

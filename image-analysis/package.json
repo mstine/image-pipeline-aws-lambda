@@ -1,0 +1,7 @@
+{
+  "name" : "image-analysis",
+  "version" : "0.0.1",
+  "dependencies" : {
+    "aws-sdk" : "^2.36.0"
+  }
+}
