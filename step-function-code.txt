@@ -1,0 +1,41 @@
+{
+  "Comment": "An example of the Amazon States Language using a parallel state to execute two branches at the same time.",
+  "StartAt": "Parallel",
+  "States": {
+    "Parallel": {
+      "Type": "Parallel",
+      "Next": "DB Update",
+      "Branches": [
+        {
+          "StartAt": "Resize",
+          "States": {
+            "Resize": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:562907585144:function:image-resize",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "Analyze",
+          "States": {
+            "Analyze": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:562907585144:function:image-analysis",
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "DB Update": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:562907585144:function:image-db-update",
+      "Next": "Final State"
+    },
+    "Final State": {
+      "Type": "Pass",
+      "End": true
+    }
+  }
+}
