@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  ImageAnalysis:
+    Properties:
+      CodeUri: s3://stine-lambda-staging/905aa5df4dd01c911f246452aa33ab9f
+      Handler: index.handler
+      MemorySize: 256
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Runtime: nodejs6.10
+      Timeout: 30
+    Type: AWS::Serverless::Function
+  ImageApi:
+    Properties:
+      CodeUri: s3://stine-lambda-staging/d95f1c883778be5ac92169a96ba64bb9
+      Events:
+        GetImage:
+          Properties:
+            Method: get
+            Path: /images/{id}
+          Type: Api
+        ListAll:
+          Properties:
+            Method: get
+            Path: /images
+          Type: Api
+      Handler: index.handler
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Runtime: nodejs6.10
+    Type: AWS::Serverless::Function
+  ImageDbUpdate:
+    Properties:
+      CodeUri: s3://stine-lambda-staging/46652851d4d52b608f70b04d3944d423
+      Handler: index.handler
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Runtime: nodejs6.10
+    Type: AWS::Serverless::Function
+  ImagePipelineTrigger:
+    Properties:
+      CodeUri: s3://stine-lambda-staging/d417d5fced278974b95a49cedd73ce7f
+      Handler: index.handler
+      Role: arn:aws:iam::562907585144:role/MyLambdaRole
+      Runtime: nodejs6.10
+    Type: AWS::Serverless::Function
+  ImageResize:
+    Properties:
+      CodeUri: s3://stine-lambda-staging/e429349012cd6cb5cfdddb67c6739aac
+      Handler: index.handler
+      MemorySize: 256
+      Role: arn:aws:iam::562907585144:role/service-role/image-resize-lambda-role
+      Runtime: nodejs6.10
+      Timeout: 30
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

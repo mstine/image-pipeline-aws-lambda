@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Resources:
+  ImagePipelineTrigger:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Role: arn:aws:iam::562907585144:role/MyLambdaRole
+      CodeUri: ./image-pipeline-trigger
+  ImageAnalysis:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      CodeUri: ./image-analysis
+      MemorySize: 256
+      Timeout: 30
+  ImageResize:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Role: arn:aws:iam::562907585144:role/service-role/image-resize-lambda-role
+      CodeUri: ./image-resize
+      MemorySize: 256
+      Timeout: 30
+  ImageDbUpdate:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      CodeUri: ./image-db-update
+  ImageApi:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      CodeUri: ./image-api
+      Events:
+        ListAll:
+          Type: Api
+          Properties:
+            Path: /images
+            Method: get
+        GetImage:
+          Type: Api
+          Properties:
+            Path: /images/{id}
+            Method: get
