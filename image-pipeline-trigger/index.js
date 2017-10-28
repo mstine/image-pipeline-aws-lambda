@@ -17,7 +17,7 @@ exports.handler = (event, context, callback) => {
 
     console.log('Triggering image pipeline with: ' + JSON.stringify(input));
 
-    var sfArn = 'arn:aws:states:us-east-1:562907585144:stateMachine:image-pipeline-2';
+    var sfArn = process.env.STATE_MACHINE_ARN;
 
     var params = {
         stateMachineArn: sfArn,
