@@ -2,16 +2,22 @@ AWSTemplateFormatVersion: '2010-09-09'
 Resources:
   ImageAnalysis:
     Properties:
-      CodeUri: s3://stine-lambda-staging/905aa5df4dd01c911f246452aa33ab9f
+      CodeUri: s3://stine-lambda-staging/757b4ed8565563579396c0a1002be447
       Handler: index.handler
       MemorySize: 256
-      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Policies:
+      - AmazonRekognitionFullAccess
+      - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
       Timeout: 30
     Type: AWS::Serverless::Function
   ImageApi:
     Properties:
-      CodeUri: s3://stine-lambda-staging/d95f1c883778be5ac92169a96ba64bb9
+      CodeUri: s3://stine-lambda-staging/903480d089cec66ae33055051f6b10f7
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ImageDb
       Events:
         GetImage:
           Properties:
@@ -24,30 +30,66 @@ Resources:
             Path: /images
           Type: Api
       Handler: index.handler
-      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Policies:
+      - AmazonDynamoDBReadOnlyAccess
+      - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
     Type: AWS::Serverless::Function
+  ImageDb:
+    Properties:
+      PrimaryKey:
+        Name: Id
+        Type: String
+    Type: AWS::Serverless::SimpleTable
   ImageDbUpdate:
     Properties:
-      CodeUri: s3://stine-lambda-staging/46652851d4d52b608f70b04d3944d423
+      CodeUri: s3://stine-lambda-staging/027205d99bc960ea9ec6aba1ce69d383
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ImageDb
       Handler: index.handler
-      Role: arn:aws:iam::562907585144:role/service-role/image-analysis-lambda
+      Policies:
+      - AmazonDynamoDBFullAccess
+      - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
     Type: AWS::Serverless::Function
   ImagePipelineTrigger:
     Properties:
-      CodeUri: s3://stine-lambda-staging/d417d5fced278974b95a49cedd73ce7f
+      CodeUri: s3://stine-lambda-staging/ff02cee21381324567bd1c4405dfc397
+      Environment:
+        Variables:
+          STATE_MACHINE_ARN: arn:aws:states:us-east-1:562907585144:stateMachine:image-pipeline-3
+      Events:
+        NewImage:
+          Properties:
+            Bucket:
+              Ref: StineLambdaImages
+            Events: s3:ObjectCreated:*
+          Type: S3
       Handler: index.handler
-      Role: arn:aws:iam::562907585144:role/MyLambdaRole
+      Policies:
+      - AWSStepFunctionsFullAccess
+      - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
     Type: AWS::Serverless::Function
   ImageResize:
     Properties:
-      CodeUri: s3://stine-lambda-staging/e429349012cd6cb5cfdddb67c6739aac
+      CodeUri: s3://stine-lambda-staging/d9bfc5ac033eae03478e9084814941bd
+      Environment:
+        Variables:
+          THUMBNAIL_BUCKET:
+            Ref: StineLambdaThumbnails
       Handler: index.handler
       MemorySize: 256
-      Role: arn:aws:iam::562907585144:role/service-role/image-resize-lambda-role
+      Policies:
+      - AmazonS3FullAccess
+      - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
       Timeout: 30
     Type: AWS::Serverless::Function
+  StineLambdaImages:
+    Type: AWS::S3::Bucket
+  StineLambdaThumbnails:
+    Type: AWS::S3::Bucket
 Transform: AWS::Serverless-2016-10-31
