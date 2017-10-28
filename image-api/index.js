@@ -14,16 +14,21 @@ exports.handler = function(event, context, callback) {
         },
     });
 
-  var id = event.pathParameters.id;
+  var id = null;
+
+  if (event.pathParameters) {
+    id = event.pathParameters.id;
+  }
 
   if (id) {
     var params = {
-      TableName : "ImagesProcessed",
+      TableName : process.env.TABLE_NAME,
       Key : { Id : id}
     };
     DYNAMO.getItem(params, done);
   } else {
-    DYNAMO.scan({ TableName : "ImagesProcessed"}, done);
+    console.log('Performing table scan...')
+    DYNAMO.scan({ TableName : process.env.TABLE_NAME}, done);
   }
 
 }
