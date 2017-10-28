@@ -11,3 +11,41 @@ This project contains AWS Lambda function definitions intended to create a image
 The S3 Buckets, DynamoDB table, Step Function, and Lambdas are all provisioned using the SAM template `sam-template.yml`.
 
 ![](step_function_graph.png)
+
+## Testing with SAM Local
+
+[SAM Local](https://github.com/awslabs/aws-sam-local) is a CLI tool that allows you to invoke Lambdas locally. Here are some tests for these functions.
+
+*NOTE: You will need to change the contents of test-env.json and <lambda_dir>/test-event.json to point to data you own, or these commands won't work!*
+
+`image-analysis`:
+
+```
+sam local invoke ImageAnalysis -e image-analysis/test-event.json
+```
+
+`image-api`:
+
+```
+sam local start-api --env-vars test-env.json
+```
+
+This starts a local copy of the AWS API Gateway. It will show you want endpoints you can test.
+
+`image-db-update`:
+
+```
+sam local invoke ImageDbUpdate -e image-db-update/test-event.json --env-vars ./test-env.json
+```
+
+`image-pipeline-trigger`:
+
+```
+sam local invoke ImagePipelineTrigger -e image-pipeline-trigger/test-event.json --env-vars ./test-env.json
+```
+
+`image-resize`:
+
+```
+sam local invoke ImageResize -e image-resize/test-event.json --env-vars ./test-env.json
+```
