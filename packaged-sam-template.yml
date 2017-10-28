@@ -54,12 +54,49 @@ Resources:
       - CloudWatchLogsFullAccess
       Runtime: nodejs6.10
     Type: AWS::Serverless::Function
+  ImagePipelineStateMachine:
+    Properties:
+      DefinitionString:
+        Fn::Sub:
+        - "{\n  \"Comment\": \"An example of the Amazon States Language using a parallel\
+          \ state to execute two branches at the same time.\",\n  \"StartAt\": \"\
+          Parallel\",\n  \"States\": {\n    \"Parallel\": {\n      \"Type\": \"Parallel\"\
+          ,\n      \"Next\": \"DB Update\",\n      \"Branches\": [\n        {\n  \
+          \        \"StartAt\": \"Resize\",\n          \"States\": {\n           \
+          \ \"Resize\": {\n              \"Type\": \"Task\",\n              \"Resource\"\
+          : \"${imageResizeArn}\",\n              \"End\": true\n            }\n \
+          \         }\n        },\n        {\n          \"StartAt\": \"Analyze\",\n\
+          \          \"States\": {\n            \"Analyze\": {\n              \"Type\"\
+          : \"Task\",\n              \"Resource\": \"${imageAnalyzeArn}\",\n     \
+          \         \"End\": true\n            }\n          }\n        }\n      ]\n\
+          \    },\n    \"DB Update\": {\n      \"Type\": \"Task\",\n      \"Resource\"\
+          : \"${dbUpdateArn}\",\n      \"Next\": \"Final State\"\n    },\n    \"Final\
+          \ State\": {\n      \"Type\": \"Pass\",\n      \"End\": true\n    }\n  }\n\
+          }"
+        - dbUpdateArn:
+            Fn::GetAtt:
+            - ImageDbUpdate
+            - Arn
+          imageAnalyzeArn:
+            Fn::GetAtt:
+            - ImageAnalysis
+            - Arn
+          imageResizeArn:
+            Fn::GetAtt:
+            - ImageResize
+            - Arn
+      RoleArn:
+        Fn::GetAtt:
+        - StatesExecutionRole
+        - Arn
+    Type: AWS::StepFunctions::StateMachine
   ImagePipelineTrigger:
     Properties:
       CodeUri: s3://stine-lambda-staging/ff02cee21381324567bd1c4405dfc397
       Environment:
         Variables:
-          STATE_MACHINE_ARN: arn:aws:states:us-east-1:562907585144:stateMachine:image-pipeline-3
+          STATE_MACHINE_ARN:
+            Ref: ImagePipelineStateMachine
       Events:
         NewImage:
           Properties:
@@ -88,6 +125,27 @@ Resources:
       Runtime: nodejs6.10
       Timeout: 30
     Type: AWS::Serverless::Function
+  StatesExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - Fn::Sub: states.${AWS::Region}.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - lambda:InvokeFunction
+            Effect: Allow
+            Resource: '*'
+          Version: '2012-10-17'
+        PolicyName: StatesExecutionPolicy
+    Type: AWS::IAM::Role
   StineLambdaImages:
     Type: AWS::S3::Bucket
   StineLambdaThumbnails:

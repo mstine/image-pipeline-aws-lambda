@@ -8,8 +8,6 @@ This project contains AWS Lambda function definitions intended to create a image
 * `image-db-update`: Stores the location of the thumbnail as well as the tags in a DynamoDB table.
 * `image-api`: Read-only API that accesses DynamoDB table.
 
-The S3 Buckets, DynamoDB table, and Lambdas are all provisioned using the SAM template `sam-template.yml`.
-
-You can see the Step Function code in `step-function-code.txt`.
+The S3 Buckets, DynamoDB table, Step Function, and Lambdas are all provisioned using the SAM template `sam-template.yml`.
 
 ![](step_function_graph.png)

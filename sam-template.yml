@@ -22,7 +22,7 @@ Resources:
         - CloudWatchLogsFullAccess
       Environment:
         Variables:
-          STATE_MACHINE_ARN: arn:aws:states:us-east-1:562907585144:stateMachine:image-pipeline-3
+          STATE_MACHINE_ARN: !Ref ImagePipelineStateMachine
       Events:
         NewImage:
           Type: S3
@@ -89,3 +89,75 @@ Resources:
           Properties:
             Path: /images/{id}
             Method: get
+
+  StatesExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+
+  ImagePipelineStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      DefinitionString:
+        !Sub
+          - |-
+            {
+              "Comment": "An example of the Amazon States Language using a parallel state to execute two branches at the same time.",
+              "StartAt": "Parallel",
+              "States": {
+                "Parallel": {
+                  "Type": "Parallel",
+                  "Next": "DB Update",
+                  "Branches": [
+                    {
+                      "StartAt": "Resize",
+                      "States": {
+                        "Resize": {
+                          "Type": "Task",
+                          "Resource": "${imageResizeArn}",
+                          "End": true
+                        }
+                      }
+                    },
+                    {
+                      "StartAt": "Analyze",
+                      "States": {
+                        "Analyze": {
+                          "Type": "Task",
+                          "Resource": "${imageAnalyzeArn}",
+                          "End": true
+                        }
+                      }
+                    }
+                  ]
+                },
+                "DB Update": {
+                  "Type": "Task",
+                  "Resource": "${dbUpdateArn}",
+                  "Next": "Final State"
+                },
+                "Final State": {
+                  "Type": "Pass",
+                  "End": true
+                }
+              }
+            }
+          - {imageResizeArn: !GetAtt [ ImageResize, Arn ], imageAnalyzeArn: !GetAtt [ ImageAnalysis, Arn ], dbUpdateArn: !GetAtt [ ImageDbUpdate, Arn ]}
+      RoleArn: !GetAtt [ StatesExecutionRole, Arn ]
