@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Resources:
+  StineLambdaImages:
+    Type: AWS::S3::Bucket
+  StineLambdaThumbnails:
+    Type: AWS::S3::Bucket
+  ImageDb:
+    Type: 'AWS::Serverless::SimpleTable'
+    Properties:
+      PrimaryKey:
+        Name: Id
+        Type: String
+  ImagePipelineTrigger:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./image-pipeline-trigger
+      Policies:
+        - AWSStepFunctionsFullAccess
+        - CloudWatchLogsFullAccess
+      Environment:
+        Variables:
+          STATE_MACHINE_ARN: !Ref ImagePipelineStateMachine
+      Events:
+        NewImage:
+          Type: S3
+          Properties:
+            Bucket: !Ref StineLambdaImages
+            Events: s3:ObjectCreated:*
+  ImageAnalysis:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./image-analysis
+      Policies:
+        - AmazonRekognitionFullAccess
+        - CloudWatchLogsFullAccess
+      MemorySize: 256
+      Timeout: 30
+  ImageResize:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./image-resize
+      Policies:
+        - AmazonS3FullAccess
+        - CloudWatchLogsFullAccess
+      MemorySize: 256
+      Timeout: 30
+      Environment:
+        Variables:
+          THUMBNAIL_BUCKET: !Ref StineLambdaThumbnails
+  ImageDbUpdate:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./image-db-update
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - CloudWatchLogsFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ImageDb
+  ImageApi:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: ./image-api
+      Policies:
+        - AmazonDynamoDBReadOnlyAccess
+        - CloudWatchLogsFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ImageDb
+      Events:
+        ListAll:
+          Type: Api
+          Properties:
+            Path: /images
+            Method: get
+        GetImage:
+          Type: Api
+          Properties:
+            Path: /images/{id}
+            Method: get
+
+  
