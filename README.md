@@ -30,7 +30,7 @@ sam local invoke ImageAnalysis -e image-analysis/test-event.json
 sam local start-api --env-vars test-env.json
 ```
 
-This starts a local copy of the AWS API Gateway. It will show you want endpoints you can test.
+This starts a local copy of the AWS API Gateway. It will show you what endpoints you can test.
 
 `image-db-update`:
 
