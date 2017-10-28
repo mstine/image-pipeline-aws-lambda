@@ -1,0 +1,11 @@
+{
+  "ImageResize": {
+    "THUMBNAIL_BUCKET": "advsls-test-thumb-bucket"
+  },
+  "ImageDbUpdate": {
+    "TABLE_NAME": "advsls-test-table"
+  },
+  "ImageApi": {
+    "TABLE_NAME": "advsls-test-table"
+  }
+}

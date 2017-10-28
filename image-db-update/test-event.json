@@ -1,0 +1,12 @@
+[
+  {
+    "id" : "12345",
+    "originalBucket" : "advsls-test-image-bucket",
+    "originalKey" : "gold-main-art-final.jpg",
+    "thumbnailBucket" : "advsls-test-thumb-bucket",
+    "thumbnailKey" : "thumbnail-gold-main-art-final.jpg"
+  },
+  {
+    "labels" : [ "foo", "bar", "baz", "quux"]
+  }
+]
