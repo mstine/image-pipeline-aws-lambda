@@ -41,7 +41,7 @@ sam local invoke ImageDbUpdate -e image-db-update/test-event.json --env-vars ./t
 `image-pipeline-trigger`:
 
 ```
-sam local invoke ImagePipelineTrigger -e image-pipeline-trigger/test-event.json --env-vars ./test-env.json
+sam local generate-event s3 | sam local invoke ImagePipelineTrigger --env-vars ./test-env.json
 ```
 
 `image-resize`:

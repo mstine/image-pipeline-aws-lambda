@@ -38,8 +38,6 @@ Resources:
       Policies:
         - AmazonRekognitionFullAccess
         - CloudWatchLogsFullAccess
-      MemorySize: 256
-      Timeout: 30
   ImageResize:
     Type: 'AWS::Serverless::Function'
     Properties:

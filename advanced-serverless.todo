@@ -1,0 +1,38 @@
+* ADVANCED SERVERLESS! *
+
+Image Pipeline Project:
+  ☐ Upload an image to a bucket
+  ☐ Create a thumbnail of that image
+  ☐ Use AI to generate tags for the image
+  ☐ Store all of the metadata in a DB
+  ☐ Front the DB with an API
+
+AWS Implementation:
+  ☐ Hello deployments with SAM!
+  ☐ Hello SAM Local!
+  ☐ Write an image-resize function
+  ☐ Test with SAM Local
+  ☐ Write an image-analysis function
+  ☐ Test with SAM Local
+  ☐ Write a database update function
+  ☐ Test with SAM Local
+  ☐ Hello AWS Step Functions!
+  ☐ Build the orchestration with Step Functions
+  ☐ Write a function to trigger the Step Function
+  ☐ Test with SAM Local
+  ☐ Write an image-api function
+  ☐ Test with SAM Local
+  ☐ Create S3 Buckets with SAM
+  ☐ Create DynamoDB Table with SAM
+  ☐ Describe Functions w/ SAM
+  ☐ Attach Policies with SAM
+  ☐ Set Environment Variables with SAM
+  ☐ Configure S3 Events with SAM
+  ☐ Consider Memory and Timeouts - Configure with SAM
+  ☐ SAM References
+  ☐ Configure API Gateway Events with SAM
+  ☐ SAM is just CloudFront!
+  ☐ Describe Step Function Role with CloudFront
+  ☐ Describe Step Function with CloudFront
+  ☐ Use CloudFront to deploy
+  ☐ Test!

@@ -89,5 +89,3 @@ Resources:
           Properties:
             Path: /images/{id}
             Method: get
-
-  
