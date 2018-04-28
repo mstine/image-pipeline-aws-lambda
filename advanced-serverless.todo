@@ -31,8 +31,8 @@ AWS Implementation:
   ☐ Consider Memory and Timeouts - Configure with SAM
   ☐ SAM References
   ☐ Configure API Gateway Events with SAM
-  ☐ SAM is just CloudFront!
-  ☐ Describe Step Function Role with CloudFront
-  ☐ Describe Step Function with CloudFront
-  ☐ Use CloudFront to deploy
+  ☐ SAM is just CloudFormation!
+  ☐ Describe Step Function Role with CloudFormation
+  ☐ Describe Step Function with CloudFormation
+  ☐ Use CloudFormation to deploy
   ☐ Test!
