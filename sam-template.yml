@@ -20,6 +20,7 @@ Resources:
       Policies:
         - AWSStepFunctionsFullAccess
         - CloudWatchLogsFullAccess
+      Timeout: 30
       Environment:
         Variables:
           STATE_MACHINE_ARN: !Ref ImagePipelineStateMachine
@@ -38,6 +39,7 @@ Resources:
       Policies:
         - AmazonRekognitionFullAccess
         - CloudWatchLogsFullAccess
+      Timeout: 30
   ImageResize:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -61,6 +63,7 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - CloudWatchLogsFullAccess
+      Timeout: 30
       Environment:
         Variables:
           TABLE_NAME: !Ref ImageDb
@@ -73,6 +76,7 @@ Resources:
       Policies:
         - AmazonDynamoDBReadOnlyAccess
         - CloudWatchLogsFullAccess
+      Timeout: 30
       Environment:
         Variables:
           TABLE_NAME: !Ref ImageDb
